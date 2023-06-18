@@ -63,6 +63,7 @@ public class MainCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 if (Main.getSurgeState().containsKey(args[1])) {
                     Main.getPlayerSurge().put(player.getName(), args[1]);
+                    Main.getPlayerKill().put(player.getName(), 0);
                     player.sendMessage(YamlUtils.getConfigMessage("Message.successJoin").replace("%surge%", args[1]));
                 } else {
                     player.sendMessage(YamlUtils.getConfigMessage("Message.noSurge").replace("%surge%", args[1]));
@@ -73,6 +74,7 @@ public class MainCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 if (Main.getPlayerSurge().containsKey(player.getName())) {
                     Main.getPlayerSurge().remove(player.getName());
+                    Main.getPlayerKill().remove(player.getName());
                     player.sendMessage(YamlUtils.getConfigMessage("Message.successQuit").replace("%surge%", args[1]));
                 } else {
                     player.sendMessage(YamlUtils.getConfigMessage("Message.noJoin"));

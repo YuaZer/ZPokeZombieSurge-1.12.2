@@ -18,6 +18,11 @@ public class PokeEvent implements Listener {
                 //TODO
                 // 胜利后，尸潮全局击杀数+1,玩家个人击杀数+1,进行奖励
                 // 检测是否是最后一只精灵，如果是，结束尸潮，并对玩家进行BOSS奖励
+                String surgeName = Main.getPlayerSurge().get(player.getName());
+                int before = Main.getSurgeKill().getOrDefault(surgeName, 0);
+                int playerbefore = Main.getPlayerKill().getOrDefault(player.getName(), 0);
+                Main.getSurgeKill().put(surgeName, ++before);
+                Main.getPlayerKill().put(player.getName(), ++playerbefore);
             }
         }
     }
