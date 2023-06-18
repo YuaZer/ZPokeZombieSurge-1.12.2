@@ -1,0 +1,12 @@
+Message:
+  reload: "&a重载成功"
+  noSurge: "&c并没有该尸潮的相关配置哦!"
+  successStart: "&a成功开启&e%surge%&a尸潮"
+  alreadyStart: "&c尸潮%surge%已经是开启了哦!"
+  successEnd: "&a成功关闭&e%surge%&a尸潮"
+  alreadyEnd: "&c该尸潮%surge%未开启哦!"
+  zpsExist: "&c该精灵文件已经存在!"
+  successSave: "&a成功保存该精灵文件"
+  successJoin: "&a成功加入&e%surge%&a尸潮"
+  successQuit: "&a成功退出&e%surge%&a尸潮"
+  noJoin: "&c您未加入任何尸潮战斗!"

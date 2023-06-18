@@ -1,0 +1,9 @@
+name: ZPokeZombieSurge
+main: io.github.yuazer.zpokezombiesurge.Main
+version: 0.1
+authors:
+  - YuaZer
+commands:
+  zpokezombiesurge:
+    aliases:
+      - zpzs
