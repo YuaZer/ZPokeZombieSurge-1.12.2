@@ -55,6 +55,9 @@ public class PokeUtils {
 
     //发起玩家和指定List<Pokemon>的单打对战(NPCTrainer)
     public static void battlePokemon(Player player, List<Pokemon> pokemons) {
+        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player))!=null){
+            return;
+        }
         NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(player.getWorld()));
 //        for (int i = 0; i <= pokemons.size() - 1; i++) {
 //            npcTrainer.getPokemonStorage().set(i, pokemons.get(i));
@@ -71,6 +74,9 @@ public class PokeUtils {
 
     //发起玩家和指定Pokemon的单打对战(NPCTrainer)
     public static void battlePokemon(Player player, Pokemon pokemon) {
+        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player))!=null){
+            return;
+        }
         NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(player.getWorld()));
         npcTrainer.getPokemonStorage().add(pokemon);
         BattleParticipant[] bp =

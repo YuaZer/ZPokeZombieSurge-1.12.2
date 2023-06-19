@@ -1,6 +1,7 @@
 package io.github.yuazer.zpokezombiesurge;
 
 import io.github.yuazer.zpokezombiesurge.Commands.MainCommand;
+import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.Runnable.SurgeJoin;
 import io.github.yuazer.zpokezombiesurge.RunnableUtils.BukkitRunnableManager;
 import org.bukkit.Bukkit;
@@ -70,6 +71,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         Bukkit.getPluginCommand("zpokezombiesurge").setExecutor(new MainCommand());
+        Bukkit.getPluginManager().registerEvents(new PokeEvent(),this);
         runnableManager = new BukkitRunnableManager(this);
         reloadRunnable();
         logLoaded(this);

@@ -10,3 +10,4 @@ Message:
   successJoin: "&a成功加入&e%surge%&a尸潮"
   successQuit: "&a成功退出&e%surge%&a尸潮"
   noJoin: "&c您未加入任何尸潮战斗!"
+  surgeNoStart: "&c该尸潮还未开启哦!"

@@ -2,6 +2,7 @@ package io.github.yuazer.zpokezombiesurge.Commands;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
 import io.github.yuazer.zpokezombiesurge.Utils.YamlUtils;
@@ -19,7 +20,16 @@ public class MainCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String o, String[] args) {
         if (command.getName().equalsIgnoreCase("zpokezombiesurge")) {
-            if (args.length == 0 && sender.isOp()) {
+            if (args.length == 0) {
+                sender.sendMessage("§b/zpokezombiesurge §a-> §b/zpzs");
+                sender.sendMessage("§a/zpokezombiesurge join 尸潮名 §b加入指定尸潮");
+                sender.sendMessage("§a/zpokezombiesurge quit §b退出指定尸潮");
+                if (sender.isOp()){
+                    sender.sendMessage("§a/zpokezombiesurge reload §b重载config.yml");
+                    sender.sendMessage("§a/zpokezombiesurge start 尸潮名 §b开启指定尸潮");
+                    sender.sendMessage("§a/zpokezombiesurge end 尸潮名 §b强制结束指定尸潮");
+                    sender.sendMessage("§a/zpokezombiesurge save 背包槽位 文件名 §b将背包指定槽位的精灵存入pokes文件夹");
+                }
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload") && sender.isOp()) {
@@ -48,8 +58,7 @@ public class MainCommand implements CommandExecutor {
                 String surgeName = args[1];
                 if (Main.getSurgeState().containsKey(surgeName)) {
                     if (Main.getSurgeState().get(surgeName)) {
-                        Main.getRunnableManager().stopRunnable(surgeName);
-                        Main.getSurgeState().put(surgeName, Boolean.FALSE);
+                        PokeEvent.getPokeEvent().endSurge(surgeName);
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successEnd").replace("%surge%", surgeName));
                     } else {
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyEnd").replace("%surge%", surgeName));
@@ -62,9 +71,13 @@ public class MainCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("join") && (sender instanceof Player)) {
                 Player player = (Player) sender;
                 if (Main.getSurgeState().containsKey(args[1])) {
-                    Main.getPlayerSurge().put(player.getName(), args[1]);
-                    Main.getPlayerKill().put(player.getName(), 0);
-                    player.sendMessage(YamlUtils.getConfigMessage("Message.successJoin").replace("%surge%", args[1]));
+                    if (Main.getSurgeState().getOrDefault(args[1],Boolean.FALSE)){
+                        Main.getPlayerSurge().put(player.getName(), args[1]);
+                        Main.getPlayerKill().put(player.getName(), 0);
+                        player.sendMessage(YamlUtils.getConfigMessage("Message.successJoin").replace("%surge%", args[1]));
+                    }else {
+                        player.sendMessage(YamlUtils.getConfigMessage("Message.surgeNoStart").replace("%surge%", args[1]));
+                    }
                 } else {
                     player.sendMessage(YamlUtils.getConfigMessage("Message.noSurge").replace("%surge%", args[1]));
                 }
@@ -73,9 +86,9 @@ public class MainCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("quit") && (sender instanceof Player)) {
                 Player player = (Player) sender;
                 if (Main.getPlayerSurge().containsKey(player.getName())) {
+                    player.sendMessage(YamlUtils.getConfigMessage("Message.successQuit").replace("%surge%", Main.getPlayerSurge().get(player.getName())));
                     Main.getPlayerSurge().remove(player.getName());
                     Main.getPlayerKill().remove(player.getName());
-                    player.sendMessage(YamlUtils.getConfigMessage("Message.successQuit").replace("%surge%", args[1]));
                 } else {
                     player.sendMessage(YamlUtils.getConfigMessage("Message.noJoin"));
                 }
