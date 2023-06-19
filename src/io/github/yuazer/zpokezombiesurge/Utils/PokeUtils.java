@@ -150,6 +150,7 @@ public class PokeUtils {
             }
         }
         Main.getRunnableManager().stopRunnable(surgeName);
+        Main.getRunnableManager().removeRunnable(surgeName);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast").replace("%surge%",surgeName));
         Main.getSurgeState().put(surgeName, Boolean.FALSE);
         Main.getSurgeKill().remove(surgeName);

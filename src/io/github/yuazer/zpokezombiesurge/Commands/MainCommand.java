@@ -4,6 +4,7 @@ import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.Main;
+import io.github.yuazer.zpokezombiesurge.Runnable.SurgeJoin;
 import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
 import io.github.yuazer.zpokezombiesurge.Utils.YamlUtils;
 import org.bukkit.command.Command;
@@ -34,7 +35,6 @@ public class MainCommand implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("reload") && sender.isOp()) {
                 Main.getInstance().reloadConfig();
-                Main.getInstance().reloadRunnable();
                 sender.sendMessage(YamlUtils.getConfigMessage("Message.reload"));
                 return true;
             }
@@ -43,6 +43,7 @@ public class MainCommand implements CommandExecutor {
                 if (Main.getSurgeState().containsKey(surgeName)) {
                     if (!Main.getSurgeState().get(surgeName)) {
                         YamlConfiguration surgeConf = YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
+                        Main.getRunnableManager().addRunnable(surgeName,new SurgeJoin(surgeName));
                         Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
                         Main.getSurgeState().put(surgeName, Boolean.TRUE);
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));

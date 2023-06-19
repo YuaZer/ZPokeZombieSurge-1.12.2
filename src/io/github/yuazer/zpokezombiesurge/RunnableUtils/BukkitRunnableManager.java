@@ -52,7 +52,7 @@ public class BukkitRunnableManager {
         //从HashMap中获取name对应的runnable
         BukkitRunnable runnable = runnables.get(name);
         //判断runnable是否存在
-        if (runnable != null) {
+        if (runnable != null && !runnable.isCancelled()) {
             //如果存在，调用cancel方法，取消任务
             runnable.cancel();
         }

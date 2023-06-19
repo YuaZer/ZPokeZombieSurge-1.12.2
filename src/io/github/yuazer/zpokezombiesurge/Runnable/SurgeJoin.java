@@ -37,7 +37,10 @@ public class SurgeJoin extends BukkitRunnable {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Main.getPlayerSurge().get(player.getName()) != null && Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgename) && PlayerUtils.isPlayerInRange(player, minLoc, maxLoc) && PlayerUtils.checkChance(conf.getInt("chance"))) {
+            if (Main.getPlayerSurge().get(player.getName()) == null || (!Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgename))) {
+                continue;
+            }
+            if (PlayerUtils.isPlayerInRange(player, minLoc, maxLoc) && PlayerUtils.checkChance(conf.getInt("chance"))) {
                 if (Main.getSurgeKill().getOrDefault(surgename, 0) < conf.getInt("amount")) {
                     PokeUtils.battlePokemon(player, PokeUtils.getSurgePokemon(conf));
                 } else {

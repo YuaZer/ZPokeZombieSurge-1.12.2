@@ -73,7 +73,6 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginCommand("zpokezombiesurge").setExecutor(new MainCommand());
         Bukkit.getPluginManager().registerEvents(new PokeEvent(),this);
         runnableManager = new BukkitRunnableManager(this);
-        reloadRunnable();
         logLoaded(this);
     }
 
@@ -90,16 +89,6 @@ public class Main extends JavaPlugin {
             filename = filename.replace(".yml", "");
             if (!surgeState.containsKey(filename)) {
                 surgeState.put(filename, false);
-            }
-        }
-    }
-
-    public void reloadRunnable() {
-        File surgeDataFolder = new File("plugins/ZPokeZombieSurge/Surge");
-        if (surgeDataFolder.listFiles()!=null){
-            for (String filename : Arrays.stream(surgeDataFolder.listFiles()).map(File::getName).collect(Collectors.toList())) {
-                filename = filename.replace(".yml", "");
-                runnableManager.addRunnable(filename, new SurgeJoin(filename));
             }
         }
     }
