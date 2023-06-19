@@ -10,9 +10,11 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.WildPixelmonPart
 import com.pixelmonmod.pixelmon.battles.rules.BattleRules;
 import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
+import io.github.yuazer.zpokezombiesurge.Main;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -133,5 +135,23 @@ public class PokeUtils {
         int index = random.nextInt(list.size());
         //获取对应的元素
         return list.get(index);
+    }
+    public static YamlConfiguration getSurgeConf(String surgeName) {
+        return YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
+    }
+    public static void endSurge(String surgeName) {
+        YamlConfiguration conf = getSurgeConf(surgeName);
+        if (!Main.getPlayerSurge().keySet().isEmpty()){
+            for (String p : Main.getPlayerSurge().keySet()) {
+                if (Main.getPlayerSurge().get(p)!=null&&Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
+                    Main.getPlayerKill().put(p, 0);
+                    Main.getPlayerSurge().remove(p);
+                }
+            }
+        }
+        Main.getRunnableManager().stopRunnable(surgeName);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast").replace("%surge%",surgeName));
+        Main.getSurgeState().put(surgeName, Boolean.FALSE);
+        Main.getSurgeKill().remove(surgeName);
     }
 }

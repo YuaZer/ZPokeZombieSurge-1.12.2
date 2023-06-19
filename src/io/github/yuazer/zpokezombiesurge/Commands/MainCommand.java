@@ -24,7 +24,7 @@ public class MainCommand implements CommandExecutor {
                 sender.sendMessage("§b/zpokezombiesurge §a-> §b/zpzs");
                 sender.sendMessage("§a/zpokezombiesurge join 尸潮名 §b加入指定尸潮");
                 sender.sendMessage("§a/zpokezombiesurge quit §b退出指定尸潮");
-                if (sender.isOp()){
+                if (sender.isOp()) {
                     sender.sendMessage("§a/zpokezombiesurge reload §b重载config.yml");
                     sender.sendMessage("§a/zpokezombiesurge start 尸潮名 §b开启指定尸潮");
                     sender.sendMessage("§a/zpokezombiesurge end 尸潮名 §b强制结束指定尸潮");
@@ -58,7 +58,7 @@ public class MainCommand implements CommandExecutor {
                 String surgeName = args[1];
                 if (Main.getSurgeState().containsKey(surgeName)) {
                     if (Main.getSurgeState().get(surgeName)) {
-                        PokeEvent.getPokeEvent().endSurge(surgeName);
+                        PokeUtils.endSurge(surgeName);
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successEnd").replace("%surge%", surgeName));
                     } else {
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyEnd").replace("%surge%", surgeName));
@@ -71,11 +71,11 @@ public class MainCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("join") && (sender instanceof Player)) {
                 Player player = (Player) sender;
                 if (Main.getSurgeState().containsKey(args[1])) {
-                    if (Main.getSurgeState().getOrDefault(args[1],Boolean.FALSE)){
+                    if (Main.getSurgeState().getOrDefault(args[1], Boolean.FALSE)) {
                         Main.getPlayerSurge().put(player.getName(), args[1]);
                         Main.getPlayerKill().put(player.getName(), 0);
                         player.sendMessage(YamlUtils.getConfigMessage("Message.successJoin").replace("%surge%", args[1]));
-                    }else {
+                    } else {
                         player.sendMessage(YamlUtils.getConfigMessage("Message.surgeNoStart").replace("%surge%", args[1]));
                     }
                 } else {

@@ -4,6 +4,7 @@ import catserver.api.bukkit.event.ForgeEvent;
 import com.pixelmonmod.pixelmon.api.events.BeatTrainerEvent;
 import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Utils.PlayerUtils;
+import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -13,11 +14,6 @@ import org.bukkit.event.Listener;
 import java.io.File;
 
 public class PokeEvent implements Listener {
-    private static PokeEvent event;
-
-    public static PokeEvent getPokeEvent() {
-        return event;
-    }
 
     @EventHandler
     public void onForge(ForgeEvent event) {
@@ -38,13 +34,10 @@ public class PokeEvent implements Listener {
         }
     }
 
-    public YamlConfiguration getSurgeConf(String surgeName) {
-        return YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
-    }
 
     public void rewardPlayer(Player player, String surgeName) {
         if (Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgeName)) {
-            YamlConfiguration conf = getSurgeConf(surgeName);
+            YamlConfiguration conf = PokeUtils.getSurgeConf(surgeName);
             for (String num : conf.getConfigurationSection("Reward.normal").getKeys(false)) {
                 int amount = Integer.parseInt(num);
                 if (Main.getPlayerKill().get(player.getName()) == amount) {;
@@ -58,22 +51,9 @@ public class PokeEvent implements Listener {
                 for (String cmd : conf.getStringList("Reward.boss")) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", player.getName()));
                 }
-                endSurge(surgeName);
+                PokeUtils.endSurge(surgeName);
             }
         }
     }
 
-    public void endSurge(String surgeName) {
-        YamlConfiguration conf = getSurgeConf(surgeName);
-        for (String p : Main.getPlayerSurge().keySet()) {
-            if (Main.getPlayerSurge().get(p)!=null&&Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
-                Main.getPlayerKill().put(p, 0);
-                Main.getPlayerSurge().remove(p);
-            }
-        }
-        Main.getRunnableManager().stopRunnable(surgeName);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast"));
-        Main.getSurgeState().put(surgeName, Boolean.FALSE);
-        Main.getSurgeKill().remove(surgeName);
-    }
 }
