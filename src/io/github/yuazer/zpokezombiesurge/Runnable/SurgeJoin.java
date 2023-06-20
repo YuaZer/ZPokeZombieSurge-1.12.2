@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.Random;
+import java.io.IOException;
 
 public class SurgeJoin extends BukkitRunnable {
     private String surgename;
@@ -42,9 +42,29 @@ public class SurgeJoin extends BukkitRunnable {
             }
             if (PlayerUtils.isPlayerInRange(player, minLoc, maxLoc) && PlayerUtils.checkChance(conf.getInt("chance"))) {
                 if (Main.getSurgeKill().getOrDefault(surgename, 0) < conf.getInt("amount")) {
-                    PokeUtils.battlePokemon(player, PokeUtils.getSurgePokemon(conf));
+                    String s = PokeUtils.getRandomString(conf.getStringList("Pokemon"));
+                    String type = PokeUtils.getTextBetweenBrackets(s);
+                    String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
+                    if (!type.equalsIgnoreCase("npc")) {
+                        PokeUtils.battlePokemon(player, PokeUtils.getPokemon(type, s));
+                    }
+                    try {
+                        PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
-                    PokeUtils.battlePokemon(player, PokeUtils.getSurgeBoss(conf));
+                    String s = conf.getString("Boss");
+                    String type = PokeUtils.getTextBetweenBrackets(s);
+                    String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
+                    if (!type.equalsIgnoreCase("npc")) {
+                        PokeUtils.battlePokemon(player, PokeUtils.getPokemon(type, s));
+                    }
+                    try {
+                        PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

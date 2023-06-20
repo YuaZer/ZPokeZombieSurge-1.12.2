@@ -23,14 +23,16 @@ public class PlayerUtils {
         }
         return count;
     }
+
     public static boolean checkChance(int n) {
         //创建一个Random对象
         Random random = new Random();
         //生成一个随机数，范围是0到100
         int randomNumber = random.nextInt(101);
         //判断随机数是否大于参数
-        return randomNumber > n;
+        return n > randomNumber;
     }
+
     public static boolean isPlayerInRange(Player player, Location minLocation, Location maxLocation) {
         Location entityLocation = player.getLocation();
 
@@ -52,6 +54,7 @@ public class PlayerUtils {
                 entityY >= minY && entityY <= maxY &&
                 entityZ >= minZ && entityZ <= maxZ;
     }
+
     /**
      * 获取玩家EMP对象
      *

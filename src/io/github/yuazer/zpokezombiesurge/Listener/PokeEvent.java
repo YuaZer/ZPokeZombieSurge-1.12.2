@@ -2,16 +2,22 @@ package io.github.yuazer.zpokezombiesurge.Listener;
 
 import catserver.api.bukkit.event.ForgeEvent;
 import com.pixelmonmod.pixelmon.api.events.BeatTrainerEvent;
+import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Utils.PlayerUtils;
 import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.io.File;
+import java.io.IOException;
 
 public class PokeEvent implements Listener {
 
@@ -33,7 +39,26 @@ public class PokeEvent implements Listener {
             }
         }
     }
-
+    @EventHandler
+    public void onInteract(PlayerInteractEntityEvent event) throws IOException {
+        try {
+            Player player = event.getPlayer();
+            if (event.getHand().equals(EquipmentSlot.HAND) && Main.getNPCSaver().get(player.getUniqueId())) {
+                Entity entity = event.getRightClicked();
+                net.minecraft.entity.Entity nmsEntity = bkToNmsEntity(entity);
+                if (nmsEntity instanceof NPCTrainer) {
+                    File file = new File("plugins/PokeUtilsPro/Trainer/" + nmsEntity.func_110124_au() + ".zns");
+                    PokeUtils.setNPCTrainerInFile_NBT((NPCTrainer) bkToNmsEntity(entity), file);
+                    player.sendMessage("§aNPC保存成功!文件名为:"+nmsEntity.func_110124_au()+".zns");
+                }
+            }
+        } catch (NullPointerException e) {
+        }
+    }
+    public static net.minecraft.entity.Entity bkToNmsEntity(Entity entity) {
+        net.minecraft.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+        return nmsEntity;
+    }
 
     public void rewardPlayer(Player player, String surgeName) {
         if (Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgeName)) {

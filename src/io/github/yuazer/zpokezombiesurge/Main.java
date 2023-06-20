@@ -2,14 +2,15 @@ package io.github.yuazer.zpokezombiesurge;
 
 import io.github.yuazer.zpokezombiesurge.Commands.MainCommand;
 import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
-import io.github.yuazer.zpokezombiesurge.Runnable.SurgeJoin;
 import io.github.yuazer.zpokezombiesurge.RunnableUtils.BukkitRunnableManager;
+import io.github.yuazer.zpokezombiesurge.Utils.SocketClient;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main extends JavaPlugin {
@@ -37,10 +38,11 @@ public class Main extends JavaPlugin {
     public static HashMap<String, String> getPlayerSurge() {
         return playerSurge;
     }
+
     /**
      * 玩家个人击杀数
-     * */
-    private static HashMap<String,Integer> playerKill = new HashMap<>();
+     */
+    private static HashMap<String, Integer> playerKill = new HashMap<>();
 
     public static HashMap<String, Integer> getPlayerKill() {
         return playerKill;
@@ -60,6 +62,11 @@ public class Main extends JavaPlugin {
     public static BukkitRunnableManager getRunnableManager() {
         return runnableManager;
     }
+    private static HashMap<UUID,Boolean> NPCSaver = new HashMap<>();
+
+    public static HashMap<UUID, Boolean> getNPCSaver() {
+        return NPCSaver;
+    }
 
     @Override
     public void onLoad() {
@@ -70,20 +77,48 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        Bukkit.getPluginCommand("zpokezombiesurge").setExecutor(new MainCommand());
-        Bukkit.getPluginManager().registerEvents(new PokeEvent(),this);
         runnableManager = new BukkitRunnableManager(this);
-        logLoaded(this);
+        SocketClient socketClient = new SocketClient("s7.i2mc.cn", 33518);
+        socketClient.connect();
+        socketClient.sendMessage("ZPokeZombieSurge//"+getmac());
+        try {
+            Thread.sleep(300L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        socketClient.disconnect();
+    }
+
+    public static String getmac() {
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+            NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+            ni.getInetAddresses().nextElement().getAddress();
+            byte[] mac = ni.getHardwareAddress();
+            String sIP = address.getHostAddress();
+            String sMAC = "";
+            Formatter formatter = new Formatter();
+            for (int i = 0; i < mac.length; ++i) {
+                sMAC = formatter.format(Locale.getDefault(), "%02X%s", mac[i], i < mac.length - 1 ? "-" : "").toString();
+            }
+            return sMAC;
+        } catch (Exception e) {
+            return "error";
+        }
     }
 
     public void prepareFolder() {
         File surgeDataFolder = new File("plugins/ZPokeZombieSurge/Surge");
         File pokeDataFolder = new File("plugins/ZPokeZombieSurge/pokes");
+        File trainerDataFolder = new File("plugins/ZPokeZombieSurge/trainer");
         if (!surgeDataFolder.exists()) {
             surgeDataFolder.mkdir();
         }
         if (!pokeDataFolder.exists()) {
             pokeDataFolder.mkdir();
+        }
+        if (!trainerDataFolder.exists()){
+            trainerDataFolder.mkdir();
         }
         for (String filename : Arrays.stream(surgeDataFolder.listFiles()).map(File::getName).collect(Collectors.toList())) {
             filename = filename.replace(".yml", "");

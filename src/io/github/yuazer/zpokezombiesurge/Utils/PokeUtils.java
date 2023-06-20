@@ -40,7 +40,18 @@ public class PokeUtils {
         pokemon.setUUID(UUID.randomUUID());
         return pokemon;
     }
+    public static void setNPCTrainerInFile_NBT(NPCTrainer trainer, File file) throws IOException {
+        NBTTagCompound nbt = new NBTTagCompound();
+        trainer.func_70014_b(nbt);
+        CompressedStreamTools.func_74795_b(nbt, file);
+    }
 
+    public static NPCTrainer getNPCTrainerInFile_NBT(File file) throws IOException {
+        NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(Bukkit.getWorld("world")));
+        NBTTagCompound nbt = CompressedStreamTools.func_74797_a(file);
+        npcTrainer.func_70037_a(nbt);
+        return npcTrainer;
+    }
     //发起玩家和指定精灵的单打对战(Wild)
     public static void battlePokemon_Wild(Player player, File file) {
         try {
@@ -57,7 +68,7 @@ public class PokeUtils {
 
     //发起玩家和指定List<Pokemon>的单打对战(NPCTrainer)
     public static void battlePokemon(Player player, List<Pokemon> pokemons) {
-        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player))!=null){
+        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)) != null && !BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)).battleEnded) {
             return;
         }
         NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(player.getWorld()));
@@ -76,7 +87,7 @@ public class PokeUtils {
 
     //发起玩家和指定Pokemon的单打对战(NPCTrainer)
     public static void battlePokemon(Player player, Pokemon pokemon) {
-        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player))!=null){
+        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)) != null && !BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)).battleEnded) {
             return;
         }
         NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(player.getWorld()));
@@ -87,21 +98,19 @@ public class PokeUtils {
         BattleParticipant[] tp = {new TrainerParticipant(npcTrainer, 1)};
         BattleRegistry.startBattle(tp, bp, new BattleRules());
     }
-
-    //从配置文件获取宝可梦
-    public static Pokemon getSurgePokemon(YamlConfiguration conf) {
-        String s = getRandomString(conf.getStringList("Pokemon"));
-        return getPokemon(s);
+    public static void battleTrainer(Player player, NPCTrainer trainer) {
+        if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)) != null && !BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)).battleEnded) {
+            return;
+        }
+        BattleParticipant[] bp =
+                {new PlayerParticipant(PlayerUtils.getEntityPlayerMP(player),
+                        Pixelmon.storageManager.getParty(player.getUniqueId()).getAndSendOutFirstAblePokemon(PlayerUtils.getEntityPlayerMP(player)))};
+        BattleParticipant[] tp = {new TrainerParticipant(trainer, 1)};
+        BattleRegistry.startBattle(tp, bp, new BattleRules());
     }
 
-    public static Pokemon getSurgeBoss(YamlConfiguration conf) {
-        String s = conf.getString("Boss");
-        return getPokemon(s);
-    }
-
-    private static Pokemon getPokemon(String s) {
-        String type = getTextBetweenBrackets(s);
-        String poke = s.replace("[local]", "").replace("[name]", "");
+    public static Pokemon getPokemon(String type,String s) {
+        String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]","");
         try {
             if (type.equalsIgnoreCase("local")) {
                 return getPokemonInFile_NBT(new File("plugins/ZPokeZombieSurge/pokes/" + poke + ".zps"));

@@ -30,12 +30,23 @@ public class MainCommand implements CommandExecutor {
                     sender.sendMessage("§a/zpokezombiesurge start 尸潮名 §b开启指定尸潮");
                     sender.sendMessage("§a/zpokezombiesurge end 尸潮名 §b强制结束指定尸潮");
                     sender.sendMessage("§a/zpokezombiesurge save 背包槽位 文件名 §b将背包指定槽位的精灵存入pokes文件夹");
+                    sender.sendMessage("§a/zpokezombiesurge npcsaver §b切换训练师保存模式,该模式下右键训练师将会存入trainer文件夹");
                 }
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload") && sender.isOp()) {
                 Main.getInstance().reloadConfig();
                 sender.sendMessage(YamlUtils.getConfigMessage("Message.reload"));
+                return true;
+            }
+            if ("npcsaver".equalsIgnoreCase(args[0]) && sender.isOp()) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    Main.getNPCSaver().put(player.getUniqueId(), !Main.getNPCSaver().getOrDefault(player.getUniqueId(), false));
+                    player.sendMessage("§a您的NPC保存模式状态:§b" + Main.getNPCSaver().get(player.getUniqueId()));
+                } else {
+                    sender.sendMessage("§c请以玩家身份使用该指令");
+                }
                 return true;
             }
             if (args[0].equalsIgnoreCase("start") && sender.isOp() && args.length == 2) {
