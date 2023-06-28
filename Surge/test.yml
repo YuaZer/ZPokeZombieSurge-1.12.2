@@ -1,7 +1,7 @@
 #尸潮位置
 world: test
-x1y1z1: 144-78-331
-x2y2z2: 155-70-320
+x1y1z1: 144//78//331
+x2y2z2: 155//70//320
 #每隔多长时间进行一次位置检测
 checkTime: 1
 #如果玩家在该尸潮范围内,有多少概率进行精灵对战
@@ -12,11 +12,13 @@ endbroadcast: "broadcast &a%surge%尸潮结束啦!"
 #尸潮精灵列表
 #[name] 表示通过精灵名随机生成宝可梦
 #[local] 表示从pokes文件夹获取宝可梦NBT文件生成尸潮宝可梦
+#[npc] 表示从trainer文件夹获取训练师NBT文件生成训练师
 Pokemon:
   - "[name]Absol"
   - "[name]Charmander"
   - "[local]absol1"
   - "[local]absol2"
+  - "[npc]文件名"
 Boss: "[local]absol3"
 Reward:
   #击退尸潮中的普通精灵奖励

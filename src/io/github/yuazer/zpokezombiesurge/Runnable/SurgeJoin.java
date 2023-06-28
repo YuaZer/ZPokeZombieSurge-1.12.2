@@ -26,8 +26,8 @@ public class SurgeJoin extends BukkitRunnable {
 
     private void loadConf() {
         conf = YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgename + ".yml"));
-        String[] xyz1 = conf.getString("x1y1z1").split("-");
-        String[] xyz2 = conf.getString("x2y2z2").split("-");
+        String[] xyz1 = conf.getString("x1y1z1").split("//");
+        String[] xyz2 = conf.getString("x2y2z2").split("//");
         World world = Bukkit.getWorld(conf.getString("world"));
         minLoc = new Location(world, Double.parseDouble(xyz1[0]), Double.parseDouble(xyz1[1]), Double.parseDouble(xyz1[2]));
         maxLoc = new Location(world, Double.parseDouble(xyz2[0]), Double.parseDouble(xyz2[1]), Double.parseDouble(xyz2[2]));
@@ -41,7 +41,7 @@ public class SurgeJoin extends BukkitRunnable {
                 continue;
             }
             if (PlayerUtils.isPlayerInRange(player, minLoc, maxLoc) && PlayerUtils.checkChance(conf.getInt("chance"))) {
-                if (Main.getSurgeKill().getOrDefault(surgename, 0) < conf.getInt("amount")) {
+                if (Main.getSurgeKill().getOrDefault(surgename, 0)+1 < conf.getInt("amount")) {
                     String s = PokeUtils.getRandomString(conf.getStringList("Pokemon"));
                     String type = PokeUtils.getTextBetweenBrackets(s);
                     String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
