@@ -37,6 +37,9 @@ public class SurgeJoin extends BukkitRunnable {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
+            if (Main.getPrivateSurgeMap().containsKey(surgename)&& !Main.getPrivateSurgeMap().get(surgename).equalsIgnoreCase(player.getName())){
+                continue;
+            }
             if (Main.getPlayerSurge().get(player.getName()) == null || (!Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgename))) {
                 continue;
             }

@@ -31,6 +31,7 @@ public class MainCommand implements CommandExecutor {
                     sender.sendMessage("§a/zpokezombiesurge end 尸潮名 §b强制结束指定尸潮");
                     sender.sendMessage("§a/zpokezombiesurge save 背包槽位 文件名 §b将背包指定槽位的精灵存入pokes文件夹");
                     sender.sendMessage("§a/zpokezombiesurge npcsaver §b切换训练师保存模式,该模式下右键训练师将会存入trainer文件夹");
+                    sender.sendMessage("§a/zpokezombiesurge startprivate 尸潮名 §b开启指定私人尸潮");
                 }
                 return true;
             }
@@ -57,6 +58,24 @@ public class MainCommand implements CommandExecutor {
                         Main.getRunnableManager().addRunnable(surgeName,new SurgeJoin(surgeName));
                         Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
                         Main.getSurgeState().put(surgeName, Boolean.TRUE);
+                        sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));
+                    } else {
+                        sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyStart").replace("%surge%", surgeName));
+                    }
+                } else {
+                    sender.sendMessage(YamlUtils.getConfigMessage("Message.noSurge").replace("%surge%", surgeName));
+                }
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("startprivate")&&sender.isOp()&&(sender instanceof Player)){
+                String surgeName = args[1];
+                if (Main.getSurgeState().containsKey(surgeName)) {
+                    if (!Main.getSurgeState().get(surgeName)) {
+                        YamlConfiguration surgeConf = YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
+                        Main.getRunnableManager().addRunnable(surgeName,new SurgeJoin(surgeName));
+                        Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
+                        Main.getSurgeState().put(surgeName, Boolean.TRUE);
+                        Main.getPrivateSurgeMap().put(surgeName,sender.getName());
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));
                     } else {
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyStart").replace("%surge%", surgeName));

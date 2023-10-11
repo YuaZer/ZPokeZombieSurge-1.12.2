@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class PokeUtils {
         pokemon.setUUID(UUID.randomUUID());
         return pokemon;
     }
+
     public static void setNPCTrainerInFile_NBT(NPCTrainer trainer, File file) throws IOException {
         NBTTagCompound nbt = new NBTTagCompound();
         trainer.func_70014_b(nbt);
@@ -51,6 +53,7 @@ public class PokeUtils {
         npcTrainer.func_70037_a(nbt);
         return npcTrainer;
     }
+
     //发起玩家和指定精灵的单打对战(Wild)
     public static void battlePokemon_Wild(Player player, File file) {
         try {
@@ -97,6 +100,7 @@ public class PokeUtils {
         BattleParticipant[] tp = {new TrainerParticipant(npcTrainer, 1)};
         BattleRegistry.startBattle(tp, bp, new BattleRules());
     }
+
     public static void battleTrainer(Player player, NPCTrainer trainer) {
         if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)) != null && !BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)).battleEnded) {
             return;
@@ -108,8 +112,8 @@ public class PokeUtils {
         BattleRegistry.startBattle(tp, bp, new BattleRules());
     }
 
-    public static Pokemon getPokemon(String type,String s) {
-        String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]","");
+    public static Pokemon getPokemon(String type, String s) {
+        String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
         try {
             if (type.equalsIgnoreCase("local")) {
                 return getPokemonInFile_NBT(new File("plugins/ZPokeZombieSurge/pokes/" + poke + ".zps"));
@@ -144,22 +148,33 @@ public class PokeUtils {
         //获取对应的元素
         return list.get(index);
     }
+
     public static YamlConfiguration getSurgeConf(String surgeName) {
         return YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
     }
+
     public static void endSurge(String surgeName) {
         YamlConfiguration conf = getSurgeConf(surgeName);
-        if (!Main.getPlayerSurge().keySet().isEmpty()){
-            for (String p : Main.getPlayerSurge().keySet()) {
-                if (Main.getPlayerSurge().get(p)!=null&&Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
-                    Main.getPlayerKill().put(p, 0);
-                    Main.getPlayerSurge().remove(p);
+
+        if (!Main.getPlayerSurge().keySet().isEmpty()) {
+            Iterator<String> iterator = Main.getPlayerSurge().keySet().iterator();
+            while (iterator.hasNext()){
+                if (Main.getPlayerSurge().get(iterator.next()) != null && Main.getPlayerSurge().get(iterator.next()).equalsIgnoreCase(surgeName)) {
+                    Main.getPlayerKill().put(iterator.next(), 0);
+                    Main.getPlayerSurge().remove(iterator.next());
                 }
             }
+//            for (String p : Main.getPlayerSurge().keySet()) {
+//                if (Main.getPlayerSurge().get(p) != null && Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
+//                    Main.getPlayerKill().put(p, 0);
+//                    Main.getPlayerSurge().remove(p);
+//                }
+//            }
         }
+        Main.getPrivateSurgeMap().remove(surgeName);
         Main.getRunnableManager().stopRunnable(surgeName);
         Main.getRunnableManager().removeRunnable(surgeName);
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast").replace("%surge%",surgeName));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast").replace("%surge%", surgeName));
         Main.getSurgeState().put(surgeName, Boolean.FALSE);
         Main.getSurgeKill().remove(surgeName);
     }

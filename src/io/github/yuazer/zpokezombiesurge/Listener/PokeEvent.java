@@ -47,12 +47,12 @@ public class PokeEvent implements Listener {
                 Entity entity = event.getRightClicked();
                 net.minecraft.entity.Entity nmsEntity = bkToNmsEntity(entity);
                 if (nmsEntity instanceof NPCTrainer) {
-                    File file = new File("plugins/PokeUtilsPro/Trainer/" + nmsEntity.func_110124_au() + ".zns");
+                    File file = new File("plugins/ZPokeZombieSurge/trainer/" + nmsEntity.func_110124_au() + ".zns");
                     PokeUtils.setNPCTrainerInFile_NBT((NPCTrainer) bkToNmsEntity(entity), file);
                     player.sendMessage("§aNPC保存成功!文件名为:"+nmsEntity.func_110124_au()+".zns");
                 }
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
         }
     }
     public static net.minecraft.entity.Entity bkToNmsEntity(Entity entity) {

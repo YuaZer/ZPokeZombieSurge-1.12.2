@@ -4,6 +4,7 @@ import io.github.yuazer.zpokezombiesurge.Commands.MainCommand;
 import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.RunnableUtils.BukkitRunnableManager;
 import io.github.yuazer.zpokezombiesurge.Utils.SocketClient;
+import io.github.yuazer.zpokezombiesurge.hook.PapiHook;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -62,10 +63,20 @@ public class Main extends JavaPlugin {
     public static BukkitRunnableManager getRunnableManager() {
         return runnableManager;
     }
-    private static HashMap<UUID,Boolean> NPCSaver = new HashMap<>();
+
+    private static HashMap<UUID, Boolean> NPCSaver = new HashMap<>();
 
     public static HashMap<UUID, Boolean> getNPCSaver() {
         return NPCSaver;
+    }
+
+    /**
+     * 私人尸潮
+     */
+    private static final HashMap<String, String> privateSurgeMap = new HashMap<>();
+
+    public static HashMap<String, String> getPrivateSurgeMap() {
+        return privateSurgeMap;
     }
 
     @Override
@@ -78,9 +89,13 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         runnableManager = new BukkitRunnableManager(this);
-        SocketClient socketClient = new SocketClient("s7.i2mc.cn", 33518);
+        PapiHook papiHook = new PapiHook();
+        if (papiHook.canRegister()) {
+            papiHook.register();
+        }
+        SocketClient socketClient = new SocketClient("s1.abrnya.com", 15562);
         socketClient.connect();
-        socketClient.sendMessage("ZPokeZombieSurge//"+getmac());
+        socketClient.sendMessage("ZPokeZombieSurge//" + getmac());
         try {
             Thread.sleep(300L);
         } catch (InterruptedException e) {
@@ -117,7 +132,7 @@ public class Main extends JavaPlugin {
         if (!pokeDataFolder.exists()) {
             pokeDataFolder.mkdir();
         }
-        if (!trainerDataFolder.exists()){
+        if (!trainerDataFolder.exists()) {
             trainerDataFolder.mkdir();
         }
         for (String filename : Arrays.stream(surgeDataFolder.listFiles()).map(File::getName).collect(Collectors.toList())) {
