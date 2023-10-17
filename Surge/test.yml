@@ -6,6 +6,10 @@ x2y2z2: 155//70//320
 checkTime: 1
 #如果玩家在该尸潮范围内,有多少概率进行精灵对战
 chance: 80
+#如果在多少次检测后仍没有玩家就结束尸潮
+offlineCount: 20
+offlineCountCommands:
+  - "broadcast %surge%尸潮因太久没有玩家，已经自动关闭"
 #尸潮的精灵数
 amount: 7
 endbroadcast: "broadcast &a%surge%尸潮结束啦!"

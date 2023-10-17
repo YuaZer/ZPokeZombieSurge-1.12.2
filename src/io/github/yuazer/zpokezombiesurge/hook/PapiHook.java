@@ -1,6 +1,7 @@
 package io.github.yuazer.zpokezombiesurge.hook;
 
 import io.github.yuazer.zpokezombiesurge.Main;
+import io.github.yuazer.zpokezombiesurge.Utils.YamlUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -27,7 +28,11 @@ public class PapiHook extends PlaceholderExpansion {
         String key = indentifier.split("_")[0];
         String surge = indentifier.split("_")[1];
         if (key.equalsIgnoreCase("isopen")){
-            return Main.getSurgeState().get(surge).toString();
+            if (Main.getSurgeState().get(surge)){
+                return YamlUtils.getConfigMessage("PapiHook.true");
+            }else {
+                return YamlUtils.getConfigMessage("PapiHook.false");
+            }
         }
         return "error";
     }

@@ -11,3 +11,12 @@ Message:
   successQuit: "&a成功退出&e%surge%&a尸潮"
   noJoin: "&c您未加入任何尸潮战斗!"
   surgeNoStart: "&c该尸潮还未开启哦!"
+  blackList: "&a您背包中的精灵有黑名单技能组合,不能加入该尸潮哦!"
+PapiHook:
+  true: "已经开启"
+  false: "未开启"
+banAttack:
+  #精灵名:
+  #  - "技能名"
+  Machamp:
+    - "Fissure"

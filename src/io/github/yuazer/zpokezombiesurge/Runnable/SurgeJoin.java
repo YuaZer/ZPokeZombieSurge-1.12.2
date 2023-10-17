@@ -18,7 +18,7 @@ public class SurgeJoin extends BukkitRunnable {
     private YamlConfiguration conf;
     private Location minLoc;
     private Location maxLoc;
-
+    private int offlineCount = 0;
     public SurgeJoin(String surgename) {
         this.surgename = surgename;
         loadConf();
@@ -36,6 +36,7 @@ public class SurgeJoin extends BukkitRunnable {
 
     @Override
     public void run() {
+        boolean hasPlayer = false;
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (Main.getPrivateSurgeMap().containsKey(surgename)&& !Main.getPrivateSurgeMap().get(surgename).equalsIgnoreCase(player.getName())){
                 continue;
@@ -69,6 +70,16 @@ public class SurgeJoin extends BukkitRunnable {
                         throw new RuntimeException(e);
                     }
                 }
+                hasPlayer = true;
+            }
+        }
+        if (!hasPlayer){
+            offlineCount++;
+        }
+        if (conf.getInt("offlineCount")==offlineCount){
+            PokeUtils.endSurge(surgename);
+            for (String cmd:conf.getStringList("offlineCountCommands")){
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),cmd.replace("%surge%",surgename));
             }
         }
     }

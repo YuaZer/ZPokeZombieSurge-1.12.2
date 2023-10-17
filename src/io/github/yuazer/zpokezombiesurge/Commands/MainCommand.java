@@ -2,6 +2,8 @@ package io.github.yuazer.zpokezombiesurge.Commands;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
+import com.pixelmonmod.pixelmon.storage.PlayerPartyStorage;
 import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Runnable.SurgeJoin;
@@ -40,6 +42,18 @@ public class MainCommand implements CommandExecutor {
                 sender.sendMessage(YamlUtils.getConfigMessage("Message.reload"));
                 return true;
             }
+            if (args[0].equalsIgnoreCase("checkmove")&&sender.isOp()&&(sender instanceof Player)){
+                Player player = (Player)sender;
+                int slot = Integer.parseInt(args[1])-1;
+                PlayerPartyStorage pps = Pixelmon.storageManager.getParty(player.getUniqueId());
+                if (pps.get(slot)==null){
+                    player.sendMessage("§a这个槽位没有精灵哦");
+                    return true;
+                }
+                Pokemon pokemon = pps.get(slot);
+                player.sendMessage(pokemon.getMoveset().toString());
+                return true;
+            }
             if ("npcsaver".equalsIgnoreCase(args[0]) && sender.isOp()) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
@@ -55,7 +69,7 @@ public class MainCommand implements CommandExecutor {
                 if (Main.getSurgeState().containsKey(surgeName)) {
                     if (!Main.getSurgeState().get(surgeName)) {
                         YamlConfiguration surgeConf = YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
-                        Main.getRunnableManager().addRunnable(surgeName,new SurgeJoin(surgeName));
+                        Main.getRunnableManager().addRunnable(surgeName, new SurgeJoin(surgeName));
                         Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
                         Main.getSurgeState().put(surgeName, Boolean.TRUE);
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));
@@ -67,15 +81,15 @@ public class MainCommand implements CommandExecutor {
                 }
                 return true;
             }
-            if(args[0].equalsIgnoreCase("startprivate")&&sender.isOp()&&(sender instanceof Player)){
+            if (args[0].equalsIgnoreCase("startprivate") && sender.isOp() && (sender instanceof Player)) {
                 String surgeName = args[1];
                 if (Main.getSurgeState().containsKey(surgeName)) {
                     if (!Main.getSurgeState().get(surgeName)) {
                         YamlConfiguration surgeConf = YamlConfiguration.loadConfiguration(new File("plugins/ZPokeZombieSurge/Surge/" + surgeName + ".yml"));
-                        Main.getRunnableManager().addRunnable(surgeName,new SurgeJoin(surgeName));
+                        Main.getRunnableManager().addRunnable(surgeName, new SurgeJoin(surgeName));
                         Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
                         Main.getSurgeState().put(surgeName, Boolean.TRUE);
-                        Main.getPrivateSurgeMap().put(surgeName,sender.getName());
+                        Main.getPrivateSurgeMap().put(surgeName, sender.getName());
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));
                     } else {
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyStart").replace("%surge%", surgeName));
@@ -101,6 +115,10 @@ public class MainCommand implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("join") && (sender instanceof Player)) {
                 Player player = (Player) sender;
+                if (!checkPerm(player)){
+                    player.sendMessage(YamlUtils.getConfigMessage("Message.blackList"));
+                    return true;
+                }
                 if (Main.getSurgeState().containsKey(args[1])) {
                     if (Main.getSurgeState().getOrDefault(args[1], Boolean.FALSE)) {
                         Main.getPlayerSurge().put(player.getName(), args[1]);
@@ -153,5 +171,20 @@ public class MainCommand implements CommandExecutor {
             }
         }
         return false;
+    }
+
+    public boolean checkPerm(Player player) {
+        PlayerPartyStorage pps = Pixelmon.storageManager.getParty(player.getUniqueId());
+        for (Pokemon pokemon : pps.getTeam()) {
+            if (!Main.getInstance().getConfig().getConfigurationSection("banAttack").getKeys(false).contains(pokemon.getSpecies().getPokemonName())) {
+                continue;
+            }
+            for (String atk : YamlUtils.getConfigStringList("banAttack." + pokemon.getSpecies().getPokemonName())) {
+                if (pokemon.getMoveset().hasAttack(atk)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

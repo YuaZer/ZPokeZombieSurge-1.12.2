@@ -5,6 +5,7 @@
       <element id="module-output" name="ZPokeZombieSurge" />
       <element id="file-copy" path="$PROJECT_DIR$/config.yml" />
       <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+      <element id="dir-copy" path="$PROJECT_DIR$/Surge" />
     </root>
   </artifact>
 </component>
