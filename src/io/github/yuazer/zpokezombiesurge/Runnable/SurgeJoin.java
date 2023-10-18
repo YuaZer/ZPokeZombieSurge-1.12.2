@@ -19,6 +19,7 @@ public class SurgeJoin extends BukkitRunnable {
     private Location minLoc;
     private Location maxLoc;
     private int offlineCount = 0;
+
     public SurgeJoin(String surgename) {
         this.surgename = surgename;
         loadConf();
@@ -37,25 +38,33 @@ public class SurgeJoin extends BukkitRunnable {
     @Override
     public void run() {
         boolean hasPlayer = false;
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (Main.getPrivateSurgeMap().containsKey(surgename)&& !Main.getPrivateSurgeMap().get(surgename).equalsIgnoreCase(player.getName())){
+        if (Main.getPlayerSurge().keySet().isEmpty()){
+            return;
+        }
+        for (String pname : Main.getPlayerSurge().keySet()) {
+            Player player = Bukkit.getPlayer(pname);
+            if (player==null){
+                continue;
+            }
+            if (Main.getPrivateSurgeMap().containsKey(surgename) && !Main.getPrivateSurgeMap().get(surgename).equalsIgnoreCase(player.getName())) {
                 continue;
             }
             if (Main.getPlayerSurge().get(player.getName()) == null || (!Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgename))) {
                 continue;
             }
             if (PlayerUtils.isPlayerInRange(player, minLoc, maxLoc) && PlayerUtils.checkChance(conf.getInt("chance"))) {
-                if (Main.getSurgeKill().getOrDefault(surgename, 0)+1 < conf.getInt("amount")) {
+                if (Main.getSurgeKill().getOrDefault(surgename, 0) + 1 < conf.getInt("amount")) {
                     String s = PokeUtils.getRandomString(conf.getStringList("Pokemon"));
                     String type = PokeUtils.getTextBetweenBrackets(s);
                     String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
                     if (!type.equalsIgnoreCase("npc")) {
                         PokeUtils.battlePokemon(player, PokeUtils.getPokemon(type, s));
-                    }
-                    try {
-                        PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } else {
+                        try {
+                            PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 } else {
                     String s = conf.getString("Boss");
@@ -63,23 +72,45 @@ public class SurgeJoin extends BukkitRunnable {
                     String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
                     if (!type.equalsIgnoreCase("npc")) {
                         PokeUtils.battlePokemon(player, PokeUtils.getPokemon(type, s));
-                    }
-                    try {
-                        PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } else {
+                        try {
+                            PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
+//                } else if (Main.getSurgeKill().getOrDefault(surgename, 0)+1==conf.getInt("amount")) {
+//                    String s = conf.getString("Boss");
+//                    String type = PokeUtils.getTextBetweenBrackets(s);
+//                    String poke = s.replace("[local]", "").replace("[name]", "").replace("[npc]", "");
+//                    if (!type.equalsIgnoreCase("npc")) {
+//                        PokeUtils.battlePokemon(player, PokeUtils.getPokemon(type, s));
+//                    } else {
+//                        try {
+//                            PokeUtils.battleTrainer(player, PokeUtils.getNPCTrainerInFile_NBT(new File("plugins/ZPokeZombieSurge/trainer/" + poke + ".zns")));
+//                        } catch (IOException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
+//                }
+//                }else {
+//                    if (Main.getPlayerSurge().containsKey(player.getName())) {
+//                        player.sendMessage(YamlUtils.getConfigMessage("Message.successQuit").replace("%surge%", Main.getPlayerSurge().get(player.getName())));
+//                        Main.getPlayerSurge().remove(player.getName());
+//                        Main.getPlayerKill().remove(player.getName());
+//                    }
+//                }
                 hasPlayer = true;
             }
         }
-        if (!hasPlayer){
+        if (!hasPlayer) {
             offlineCount++;
         }
-        if (conf.getInt("offlineCount")==offlineCount){
+        if (conf.getInt("offlineCount") == offlineCount) {
             PokeUtils.endSurge(surgename);
-            for (String cmd:conf.getStringList("offlineCountCommands")){
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),cmd.replace("%surge%",surgename));
+            for (String cmd : conf.getStringList("offlineCountCommands")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%surge%", surgename));
             }
         }
     }

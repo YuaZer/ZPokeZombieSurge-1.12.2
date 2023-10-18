@@ -1,7 +1,5 @@
 package io.github.yuazer.zpokezombiesurge;
 
-import io.github.yuazer.zpokezombiesurge.Commands.MainCommand;
-import io.github.yuazer.zpokezombiesurge.Listener.PokeEvent;
 import io.github.yuazer.zpokezombiesurge.RunnableUtils.BukkitRunnableManager;
 import io.github.yuazer.zpokezombiesurge.Utils.SocketClient;
 import io.github.yuazer.zpokezombiesurge.hook.PapiHook;
@@ -137,9 +135,7 @@ public class Main extends JavaPlugin {
         }
         for (String filename : Arrays.stream(surgeDataFolder.listFiles()).map(File::getName).collect(Collectors.toList())) {
             filename = filename.replace(".yml", "");
-            if (!surgeState.containsKey(filename)) {
-                surgeState.put(filename, false);
-            }
+            surgeState.put(filename, false);
         }
     }
 

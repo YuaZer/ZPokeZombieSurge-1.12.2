@@ -12,6 +12,9 @@ Message:
   noJoin: "&c您未加入任何尸潮战斗!"
   surgeNoStart: "&c该尸潮还未开启哦!"
   blackList: "&a您背包中的精灵有黑名单技能组合,不能加入该尸潮哦!"
+Handler:
+  StartCommands:
+    - "broadcast &a%surge%尸潮开启啦，大家快去参加!"
 PapiHook:
   true: "已经开启"
   false: "未开启"

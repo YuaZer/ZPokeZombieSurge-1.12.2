@@ -30,6 +30,7 @@ public class PokeUtils {
     //将宝可梦存为NBT文件
     public static void setPokemonInFile_NBT(Pokemon pokemon, File file) throws IOException {
         NBTTagCompound nbt = new NBTTagCompound();
+        pokemon.setUUID(UUID.randomUUID());
         pokemon.writeToNBT(nbt);
         CompressedStreamTools.func_74795_b(nbt, file);
     }
@@ -155,7 +156,6 @@ public class PokeUtils {
 
     public static void endSurge(String surgeName) {
         YamlConfiguration conf = getSurgeConf(surgeName);
-
         if (!Main.getPlayerSurge().keySet().isEmpty()) {
             Iterator<String> iterator = Main.getPlayerSurge().keySet().iterator();
             while (iterator.hasNext()){
@@ -164,12 +164,6 @@ public class PokeUtils {
                     Main.getPlayerSurge().remove(iterator.next());
                 }
             }
-//            for (String p : Main.getPlayerSurge().keySet()) {
-//                if (Main.getPlayerSurge().get(p) != null && Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
-//                    Main.getPlayerKill().put(p, 0);
-//                    Main.getPlayerSurge().remove(p);
-//                }
-//            }
         }
         Main.getPrivateSurgeMap().remove(surgeName);
         Main.getRunnableManager().stopRunnable(surgeName);

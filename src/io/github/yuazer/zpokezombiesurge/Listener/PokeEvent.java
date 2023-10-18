@@ -6,6 +6,7 @@ import com.pixelmonmod.pixelmon.entities.npcs.NPCTrainer;
 import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Utils.PlayerUtils;
 import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
+import io.github.yuazer.zpokezombiesurge.Utils.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
@@ -39,6 +40,7 @@ public class PokeEvent implements Listener {
             }
         }
     }
+
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent event) throws IOException {
         try {
@@ -49,36 +51,43 @@ public class PokeEvent implements Listener {
                 if (nmsEntity instanceof NPCTrainer) {
                     File file = new File("plugins/ZPokeZombieSurge/trainer/" + nmsEntity.func_110124_au() + ".zns");
                     PokeUtils.setNPCTrainerInFile_NBT((NPCTrainer) bkToNmsEntity(entity), file);
-                    player.sendMessage("§aNPC保存成功!文件名为:"+nmsEntity.func_110124_au()+".zns");
+                    player.sendMessage("§aNPC保存成功!文件名为:" + nmsEntity.func_110124_au() + ".zns");
                 }
             }
         } catch (NullPointerException ignored) {
         }
     }
+
     public static net.minecraft.entity.Entity bkToNmsEntity(Entity entity) {
         net.minecraft.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
         return nmsEntity;
     }
 
     public void rewardPlayer(Player player, String surgeName) {
-        if (Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgeName)) {
-            YamlConfiguration conf = PokeUtils.getSurgeConf(surgeName);
-            for (String num : conf.getConfigurationSection("Reward.normal").getKeys(false)) {
-                int amount = Integer.parseInt(num);
-                if (Main.getPlayerKill().get(player.getName()) == amount) {;
-                    for (String cmd : conf.getStringList("Reward.normal." + amount)) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", player.getName()));
-                    }
-                    return;
-                }
-            }
-            if (Main.getSurgeKill().get(surgeName) == conf.getInt("amount")) {
-                for (String cmd : conf.getStringList("Reward.boss")) {
+        if (!Main.getPlayerSurge().get(player.getName()).equalsIgnoreCase(surgeName)) {
+            return;
+        }
+        YamlConfiguration conf = PokeUtils.getSurgeConf(surgeName);
+        for (String num : conf.getConfigurationSection("Reward.normal").getKeys(false)) {
+            int amount = Integer.parseInt(num);
+            if (Main.getPlayerKill().get(player.getName()) == amount) {
+                for (String cmd : conf.getStringList("Reward.normal." + amount)) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", player.getName()));
                 }
-                PokeUtils.endSurge(surgeName);
+                return;
             }
         }
+        if (Main.getSurgeKill().get(surgeName) == conf.getInt("amount")) {
+            for (String cmd : conf.getStringList("Reward.boss")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", player.getName()));
+            }
+            //各打各玩法
+            player.sendMessage(YamlUtils.getConfigMessage("Message.successQuit").replace("%surge%", Main.getPlayerSurge().get(player.getName())));
+            Main.getPlayerSurge().remove(player.getName());
+            Main.getPlayerKill().remove(player.getName());
+            //一人击败boss全体结束玩法
+            //PokeUtils.endSurge(surgeName);
+        }
     }
-
 }
+

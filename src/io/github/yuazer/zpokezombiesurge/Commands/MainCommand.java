@@ -9,6 +9,7 @@ import io.github.yuazer.zpokezombiesurge.Main;
 import io.github.yuazer.zpokezombiesurge.Runnable.SurgeJoin;
 import io.github.yuazer.zpokezombiesurge.Utils.PokeUtils;
 import io.github.yuazer.zpokezombiesurge.Utils.YamlUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,8 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class MainCommand implements CommandExecutor {
     @Override
@@ -34,19 +37,21 @@ public class MainCommand implements CommandExecutor {
                     sender.sendMessage("§a/zpokezombiesurge save 背包槽位 文件名 §b将背包指定槽位的精灵存入pokes文件夹");
                     sender.sendMessage("§a/zpokezombiesurge npcsaver §b切换训练师保存模式,该模式下右键训练师将会存入trainer文件夹");
                     sender.sendMessage("§a/zpokezombiesurge startprivate 尸潮名 §b开启指定私人尸潮");
+                    sender.sendMessage("§a/zpokezombiesurge checkmove 精灵槽位 §b查看精灵技能信息");
                 }
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload") && sender.isOp()) {
                 Main.getInstance().reloadConfig();
+                Main.getInstance().prepareFolder();
                 sender.sendMessage(YamlUtils.getConfigMessage("Message.reload"));
                 return true;
             }
-            if (args[0].equalsIgnoreCase("checkmove")&&sender.isOp()&&(sender instanceof Player)){
-                Player player = (Player)sender;
-                int slot = Integer.parseInt(args[1])-1;
+            if (args[0].equalsIgnoreCase("checkmove") && sender.isOp() && (sender instanceof Player)) {
+                Player player = (Player) sender;
+                int slot = Integer.parseInt(args[1]) - 1;
                 PlayerPartyStorage pps = Pixelmon.storageManager.getParty(player.getUniqueId());
-                if (pps.get(slot)==null){
+                if (pps.get(slot) == null) {
                     player.sendMessage("§a这个槽位没有精灵哦");
                     return true;
                 }
@@ -72,6 +77,9 @@ public class MainCommand implements CommandExecutor {
                         Main.getRunnableManager().addRunnable(surgeName, new SurgeJoin(surgeName));
                         Main.getRunnableManager().startRunnable(surgeName, 0L, surgeConf.getInt("checkTime") * 20L);
                         Main.getSurgeState().put(surgeName, Boolean.TRUE);
+                        YamlUtils.getConfigStringList("Handler.StartCommands").forEach(c -> {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c.replace("%surge%", surgeName));
+                        });
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.successStart").replace("%surge%", surgeName));
                     } else {
                         sender.sendMessage(YamlUtils.getConfigMessage("Message.alreadyStart").replace("%surge%", surgeName));
@@ -115,7 +123,7 @@ public class MainCommand implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("join") && (sender instanceof Player)) {
                 Player player = (Player) sender;
-                if (!checkPerm(player)){
+                if (!checkPerm(player)) {
                     player.sendMessage(YamlUtils.getConfigMessage("Message.blackList"));
                     return true;
                 }
