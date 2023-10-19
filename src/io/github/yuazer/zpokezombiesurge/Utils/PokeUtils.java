@@ -106,10 +106,14 @@ public class PokeUtils {
         if (BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)) != null && !BattleRegistry.getBattle(PlayerUtils.getEntityPlayerMP(player)).battleEnded) {
             return;
         }
+        NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(player.getWorld()));
+        trainer.getPokemonStorage().getTeam().forEach(pokemon -> {
+            npcTrainer.getPokemonStorage().add(pokemon);
+        });
         BattleParticipant[] bp =
                 {new PlayerParticipant(PlayerUtils.getEntityPlayerMP(player),
                         Pixelmon.storageManager.getParty(player.getUniqueId()).getAndSendOutFirstAblePokemon(PlayerUtils.getEntityPlayerMP(player)))};
-        BattleParticipant[] tp = {new TrainerParticipant(trainer, 1)};
+        BattleParticipant[] tp = {new TrainerParticipant(npcTrainer, 1)};
         BattleRegistry.startBattle(tp, bp, new BattleRules());
     }
 
@@ -157,12 +161,25 @@ public class PokeUtils {
     public static void endSurge(String surgeName) {
         YamlConfiguration conf = getSurgeConf(surgeName);
         if (!Main.getPlayerSurge().keySet().isEmpty()) {
-            Iterator<String> iterator = Main.getPlayerSurge().keySet().iterator();
-            while (iterator.hasNext()){
-                if (Main.getPlayerSurge().get(iterator.next()) != null && Main.getPlayerSurge().get(iterator.next()).equalsIgnoreCase(surgeName)) {
-                    Main.getPlayerKill().put(iterator.next(), 0);
-                    Main.getPlayerSurge().remove(iterator.next());
-                }
+//            Iterator<String> iterator = Main.getPlayerSurge().keySet().iterator();
+//            while (iterator.hasNext()) {
+//                if (Main.getPlayerSurge().get(iterator.next()) != null && Main.getPlayerSurge().get(iterator.next()).equalsIgnoreCase(surgeName)) {
+//                    Main.getPlayerKill().remove(iterator.next());
+//                    Main.getPlayerSurge().remove(iterator.next());
+//                    if (!iterator.hasNext()){
+//                        break;
+//                    }
+//                }
+//            }
+            try {
+                Main.getPlayerSurge().keySet().forEach(p -> {
+                    if (Main.getPlayerSurge().get(p) != null && Main.getPlayerSurge().get(p).equalsIgnoreCase(surgeName)) {
+                        Main.getPlayerKill().remove(p);
+                        Main.getPlayerSurge().remove(p);
+                    }
+                });
+            }catch (Exception ignored){
+
             }
         }
         Main.getPrivateSurgeMap().remove(surgeName);
@@ -170,6 +187,6 @@ public class PokeUtils {
         Main.getRunnableManager().removeRunnable(surgeName);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), conf.getString("endbroadcast").replace("%surge%", surgeName));
         Main.getSurgeState().put(surgeName, Boolean.FALSE);
-        Main.getSurgeKill().remove(surgeName);
+//        Main.getSurgeKill().remove(surgeName);
     }
 }

@@ -23,16 +23,16 @@ public class Main extends JavaPlugin {
      * 尸潮击杀计数器
      */
 
-    private static HashMap<String, Integer> surgeKill = new HashMap<>();
-
-    public static HashMap<String, Integer> getSurgeKill() {
-        return surgeKill;
-    }
+//    private static HashMap<String, Integer> surgeKill = new HashMap<>();
+//
+//    public static HashMap<String, Integer> getSurgeKill() {
+//        return surgeKill;
+//    }
 
     /**
      * 玩家所加入的尸潮
      */
-    private static HashMap<String, String> playerSurge = new HashMap<>();
+    private static final HashMap<String, String> playerSurge = new HashMap<>();
 
     public static HashMap<String, String> getPlayerSurge() {
         return playerSurge;
@@ -41,7 +41,7 @@ public class Main extends JavaPlugin {
     /**
      * 玩家个人击杀数
      */
-    private static HashMap<String, Integer> playerKill = new HashMap<>();
+    private static final HashMap<String, Integer> playerKill = new HashMap<>();
 
     public static HashMap<String, Integer> getPlayerKill() {
         return playerKill;
@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
     /**
      * 尸潮状态
      */
-    private static HashMap<String, Boolean> surgeState = new HashMap<>();
+    private static final HashMap<String, Boolean> surgeState = new HashMap<>();
 
     public static HashMap<String, Boolean> getSurgeState() {
         return surgeState;
@@ -62,7 +62,7 @@ public class Main extends JavaPlugin {
         return runnableManager;
     }
 
-    private static HashMap<UUID, Boolean> NPCSaver = new HashMap<>();
+    private static final HashMap<UUID, Boolean> NPCSaver = new HashMap<>();
 
     public static HashMap<UUID, Boolean> getNPCSaver() {
         return NPCSaver;
@@ -142,7 +142,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         logDisable(this);
-        surgeKill.clear();
+//        surgeKill.clear();
         playerSurge.clear();
         surgeState.clear();
     }
