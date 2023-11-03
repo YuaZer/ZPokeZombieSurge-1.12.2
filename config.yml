@@ -18,6 +18,8 @@ Handler:
 PapiHook:
   true: "已经开启"
   false: "未开启"
+  InSurge: "在尸潮中"
+  notInSurge: "不在尸潮中"
 banAttack:
   #精灵名:
   #  - "技能名"

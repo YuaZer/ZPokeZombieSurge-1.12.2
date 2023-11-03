@@ -3,6 +3,7 @@ package io.github.yuazer.zpokezombiesurge;
 import io.github.yuazer.zpokezombiesurge.RunnableUtils.BukkitRunnableManager;
 import io.github.yuazer.zpokezombiesurge.Utils.SocketClient;
 import io.github.yuazer.zpokezombiesurge.hook.PapiHook;
+import io.github.yuazer.zpokezombiesurge.object.SurgeLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,6 +11,8 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class Main extends JavaPlugin {
@@ -77,6 +80,12 @@ public class Main extends JavaPlugin {
         return privateSurgeMap;
     }
 
+    private static ConcurrentMap<String, SurgeLocation> surgeLocationMap = new ConcurrentHashMap<>();
+
+    public static ConcurrentMap<String, SurgeLocation> getSurgeLocationMap() {
+        return surgeLocationMap;
+    }
+
     @Override
     public void onLoad() {
         saveDefaultConfig();
@@ -136,6 +145,7 @@ public class Main extends JavaPlugin {
         for (String filename : Arrays.stream(surgeDataFolder.listFiles()).map(File::getName).collect(Collectors.toList())) {
             filename = filename.replace(".yml", "");
             surgeState.put(filename, false);
+            surgeLocationMap.put(filename, new SurgeLocation(filename));
         }
     }
 

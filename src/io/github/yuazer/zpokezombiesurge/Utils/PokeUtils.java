@@ -37,8 +37,24 @@ public class PokeUtils {
 
     //从文件中的NBT获取宝可梦
     public static Pokemon getPokemonInFile_NBT(File file) throws IOException {
-        Pokemon pokemon = Pixelmon.pokemonFactory.create(CompressedStreamTools.func_74797_a(file));
-        pokemon.setUUID(UUID.randomUUID());
+        Pokemon pokemon1 = Pixelmon.pokemonFactory.create(CompressedStreamTools.func_74797_a(file));
+        pokemon1.setUUID(UUID.randomUUID());
+        Pokemon pokemon;
+        NBTTagCompound nbt = new NBTTagCompound();
+        pokemon1.getIVs().writeToNBT(nbt);
+        pokemon = Pixelmon.pokemonFactory.create(EnumSpecies.getFromNameAnyCase(pokemon1.getSpecies().name()));
+        pokemon.getIVs().readFromNBT(nbt);
+        pokemon1.getEVs().writeToNBT(nbt);
+        pokemon.getEVs().readFromNBT(nbt);
+        pokemon.setMoveset(pokemon1.getMoveset());
+        pokemon.setLevel(pokemon.getLevel());
+        pokemon.setAbility(pokemon1.getAbility());
+        pokemon.setShiny(pokemon1.isShiny());
+        pokemon.setGender(pokemon1.getGender());
+        pokemon.setGrowth(pokemon1.getGrowth());
+        pokemon.setStatus(pokemon.getStatus());
+        pokemon.setForm(pokemon1.getForm());
+        pokemon.setHeldItem(pokemon1.getHeldItem());
         return pokemon;
     }
 
@@ -49,9 +65,16 @@ public class PokeUtils {
     }
 
     public static NPCTrainer getNPCTrainerInFile_NBT(File file) throws IOException {
-        NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(Bukkit.getWorld("world")));
+        NPCTrainer npcTrainer1 = new NPCTrainer(NMSUtils.bkToNmsWorld(Bukkit.getWorld("world")));
         NBTTagCompound nbt = CompressedStreamTools.func_74797_a(file);
-        npcTrainer.func_70037_a(nbt);
+        npcTrainer1.func_70037_a(nbt);
+        NPCTrainer npcTrainer = new NPCTrainer(NMSUtils.bkToNmsWorld(Bukkit.getWorld("world")));
+        for (int i = 0; i < 6; i++) {
+            Pokemon pokemon = npcTrainer1.getPokemonStorage().get(i);
+            if (npcTrainer1.getPokemonStorage().get(i)!=null&&!npcTrainer1.getPokemonStorage().get(i).isEgg()){
+                npcTrainer.getPokemonStorage().set(i,pokemon);
+            }
+        }
         return npcTrainer;
     }
 

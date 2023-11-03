@@ -29,7 +29,7 @@ public class MainCommand implements CommandExecutor {
             if (args.length == 0) {
                 sender.sendMessage("§b/zpokezombiesurge §a-> §b/zpzs");
                 sender.sendMessage("§a/zpokezombiesurge join 尸潮名 §b加入指定尸潮");
-                sender.sendMessage("§a/zpokezombiesurge quit §b退出指定尸潮");
+                sender.sendMessage("§a/zpokezombiesurge quit 尸潮名 §b退出指定尸潮");
                 if (sender.isOp()) {
                     sender.sendMessage("§a/zpokezombiesurge reload §b重载config.yml");
                     sender.sendMessage("§a/zpokezombiesurge start 尸潮名 §b开启指定尸潮");
