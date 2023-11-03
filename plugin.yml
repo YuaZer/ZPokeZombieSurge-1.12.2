@@ -1,6 +1,6 @@
 name: ZPokeZombieSurge
 main: io.github.yuazer.zpokezombiesurge.Main
-version: 1.9
+version: 1.9-fix
 authors:
   - YuaZer
 commands:

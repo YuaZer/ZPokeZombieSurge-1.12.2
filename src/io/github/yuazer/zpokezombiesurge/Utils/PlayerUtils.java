@@ -35,19 +35,23 @@ public class PlayerUtils {
 
     public static boolean isPlayerInRange(Player player, Location minLocation, Location maxLocation) {
         Location entityLocation = player.getLocation();
-
         double entityX = entityLocation.getX();
         double entityY = entityLocation.getY();
         double entityZ = entityLocation.getZ();
-
         double minX = Math.min(minLocation.getX(), maxLocation.getX());
         double minY = Math.min(minLocation.getY(), maxLocation.getY());
         double minZ = Math.min(minLocation.getZ(), maxLocation.getZ());
-
         double maxX = Math.max(minLocation.getX(), maxLocation.getX());
         double maxY = Math.max(minLocation.getY(), maxLocation.getY());
         double maxZ = Math.max(minLocation.getZ(), maxLocation.getZ());
-
+        if (entityLocation.getWorld() == null) {
+            System.out.println("world null");
+            return false;
+        }
+        if (maxLocation.getWorld() == null) {
+            System.out.println("maxLocation world null");
+            return false;
+        }
         return entityLocation.getWorld().getName().equalsIgnoreCase(maxLocation.getWorld().getName()) &&
                 entityLocation.getWorld().getName().equalsIgnoreCase(minLocation.getWorld().getName()) &&
                 entityX >= minX && entityX <= maxX &&
@@ -93,6 +97,6 @@ public class PlayerUtils {
      * @return Player对象
      */
     public static Player getPlayer(EntityPlayer player) {
-        return player == null ? null : Bukkit.getPlayer(player.getPersistentID());
+        return player == null ? null : Bukkit.getPlayer(player.func_110124_au());
     }
 }
